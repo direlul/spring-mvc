@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/layout}">
+<head>
+    <title>Main</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div><a th:href="@{../logout}">Выйти</a></div>
+        <div><a th:href="@{../user}">Список пользователей</a></div>
+        <div>Форма ввода</div>
+        <div>
+            <form method="post" th:action="@{''}" enctype="multipart/form-data">
+                <input type="text" name="text" placeholder="Введите сообщение" />
+                <input type="text" name="tag" placeholder="Тэг" />
+                <input type="file" name="file">
+                <button type="submit">Добавить</button>
+            </form>
+        </div>
+
+        <div>Список сообщений</div>
+        <div>
+            <form method="get" th:action="@{main}">
+                <input type="text" name="filter" th:value="${param.filter}">
+                <button type="submit">Найти</button>
+            </form>
+        </div>
+        <div th:each="message : ${messages}">
+            <b th:text="${message.id}">id</b>
+            <span th:text="${message.text}">text</span>
+            <i th:text="${message.tag}">tag</i>
+            <strong th:text="${message.author?.username}">none</strong>
+            <div th:if="${message.filename != null}">
+                <img th:src="@{/img/{filename}(filename=${message.filename})}">
+            </div>
+        </div>
+
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
+    </div>
+</body>
+</html>

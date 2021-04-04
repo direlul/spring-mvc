@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/layout}"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <title>User List</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <table>
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+            </tr>
+            </thead>
+            <tbody >
+            <tr th:each="user : ${users}">
+                <td th:text="${user.username}">Name</td>
+                <td th:text="${#strings.setJoin(user.roles, ', ')}">Role</td>
+                <td><a th:href="@{user/{id}(id=${user.id})}">Edit</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
