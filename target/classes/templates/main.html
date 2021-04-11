@@ -1,42 +1,72 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layouts/layout}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layouts/layout}">
 <head>
     <title>Main</title>
 </head>
 <body>
     <div layout:fragment="content">
-        <div><a th:href="@{../logout}">Выйти</a></div>
-        <div><a th:href="@{../user}">Список пользователей</a></div>
-        <div>Форма ввода</div>
-        <div>
-            <form method="post" th:action="@{''}" enctype="multipart/form-data">
-                <input type="text" name="text" placeholder="Введите сообщение" />
-                <input type="text" name="tag" placeholder="Тэг" />
-                <input type="file" name="file">
-                <button type="submit">Добавить</button>
-            </form>
-        </div>
 
-        <div>Список сообщений</div>
-        <div>
-            <form method="get" th:action="@{main}">
-                <input type="text" name="filter" th:value="${param.filter}">
-                <button type="submit">Найти</button>
-            </form>
-        </div>
-        <div th:each="message : ${messages}">
-            <b th:text="${message.id}">id</b>
-            <span th:text="${message.text}">text</span>
-            <i th:text="${message.tag}">tag</i>
-            <strong th:text="${message.author?.username}">none</strong>
-            <div th:if="${message.filename != null}">
-                <img th:src="@{/img/{filename}(filename=${message.filename})}">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <form method="get" th:action="@{main}" class="form-inline">
+                    <div class="input-group">
+                        <input type="text" name="filter" class="form-control" th:value="${param.filter}"
+                               placeholder="Search by tag">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
             </div>
         </div>
 
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Sign Out"/>
-        </form>
+        <a class="btn btn-primary mt-3" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+            Add new Message
+        </a>
+        <div class="collapse"  th:classappend="${#fields.hasErrors('message.*')} ? show : ''" id="collapseExample">
+            <div class="form-group mt-3">
+                <form method="post" th:action="@{''}" enctype="multipart/form-data" th:object="${message}">
+                    <div class="form-group mt-3">
+                        <input type="text" name="text" th:field="*{text}" class="form-control"
+                               th:classappend="${#fields.hasErrors('text')} ? is-invalid : ''"
+                               placeholder="Введите сообщение"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <input type="text" name="tag" th:field="*{tag}" class="form-control"
+                               th:classappend="${#fields.hasErrors('tag')} ? is-invalid : ''"
+                               placeholder="Тэг"/>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('tag')}" th:errors="*{tag}"></div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <div class="custom-file">
+                            <input type="file" class="form-control" name="file" id="customFile">
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mt-3 row row-cols-1 row-cols-md-3 g-4">
+            <div th:each="message : ${messages}" class="col">
+                <div class="card h-100">
+
+                    <img th:if="${message.filename != null}"
+                         th:src="@{/img/{filename}(filename=${message.filename})}" class="card-img-top">
+
+                    <div class="m-2 card-body card-text">
+                        <span th:text="${message.text}">text</span>
+                        <i th:text="${message.tag}">tag</i>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <span th:text="${message.author?.username}">none</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </body>
 </html>

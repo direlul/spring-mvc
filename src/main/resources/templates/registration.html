@@ -9,16 +9,51 @@
     <div th:if="${param.error}">
         Invalid username and password.
     </div>
-    <div th:if="${param.logout}">
-        You have been logged out.
-    </div>
 
     <div>Add new User</div>
     <div th:if="${message != null}" th:text="${message}"></div>
-    <form th:action="@{/registration}" method="post">
-        <div><label> User Name : <input type="text" name="username"/> </label></div>
-        <div><label> Password: <input type="password" name="password"/> </label></div>
-        <div><input type="submit" value="Registration"/></div>
+    <form th:action="@{/registration}" th:method="post" th:object="${user}">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">User Name :</label>
+            <div class="col-sm-6">
+                <input type="text" name="username" class="form-control" placeholder="User name"
+                       th:field="*{username}"
+                       th:classappend="${#fields.hasErrors('username')} ? is-invalid : ''"/>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            </div>
+        </div>
+        <div class="form-group row mt-3">
+            <label class="col-sm-2 col-form-label">Password:</label>
+            <div class="col-sm-6">
+                <input type="password" name="password" class="form-control" placeholder="Password"
+                       th:field="*{password}"
+                       th:classappend="${#fields.hasErrors('password') || passwordError != null} ? is-invalid : ''" />
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                <div class="invalid-feedback" th:if="${passwordError != null}" th:text="${passwordError}"></div>
+            </div>
+        </div>
+
+        <div class="form-group row mt-3">
+            <label class="col-sm-2 col-form-label">Password:</label>
+            <div class="col-sm-6">
+                <input type="password" name="password2" class="form-control" placeholder="Retype password"
+                       th:field="*{password2}"
+                       th:classappend="${#fields.hasErrors('password2')} ? is-invalid : ''"/>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}"></div>
+            </div>
+        </div>
+
+        <div class="form-group row mt-3">
+            <label class="col-sm-2 col-form-label">Email:</label>
+            <div class="col-sm-6">
+                <input type="email" name="email" class="form-control" placeholder="some@some.com"
+                       th:field="*{email}"
+                       th:classappend="${#fields.hasErrors('email')} ? is-invalid : ''"/>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </div>
 

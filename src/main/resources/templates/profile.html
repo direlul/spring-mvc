@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Main</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1 th:text="${username}"></h1>
+        <div th:if="${message != null}" th:text="${message}"></div>
+        <form th:method="POST" th:action="@{/user/profile}">
+            <div class="form-group row mb-3">
+                <label class="col-sm-2 col-form-label">Password:</label>
+                <div class="col-sm-6">
+                    <input type="password" name="password" class="form-control" placeholder="Password" />
+                </div>
+            </div>
+
+            <div class="form-group row mb-3">
+                <label class="col-sm-2 col-form-label">Email:</label>
+                <div class="col-sm-6">
+                    <input type="email" name="email" class="form-control" placeholder="some@some.com" th:value="${mail}"/>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -2,41 +2,66 @@ package ru.saburov.springmvc.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.saburov.springmvc.domain.Role;
 import ru.saburov.springmvc.domain.User;
-import ru.saburov.springmvc.repository.UserRepository;
+import ru.saburov.springmvc.service.UserService;
 
-import java.util.Collections;
+import javax.validation.Valid;
 
 @Controller
 public class RegistrationController {
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public RegistrationController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public RegistrationController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/registration")
-    public String registration() {
+    public String registration(Model model) {
+        model.addAttribute("user", new User());
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute User user, Model model) {
-        User userFromDb = userRepository.findByUsername(user.getUsername());
+    public String addUser(@ModelAttribute("user") @Valid User user, Errors errors, Model model) {
 
-        if (userFromDb != null) {
+        boolean isValid = true;
+
+        if (user.getPassword() != null && !user.getPassword().equals(user.getPassword2())) {
+            model.addAttribute("passwordError", "Passwords are different!");
+            isValid = false;
+        }
+
+        if (errors.hasErrors()) {
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return "registration";
+        }
+
+        if (!userService.addUser(user)) {
             model.addAttribute("message", "User exists!");
             return "registration";
         }
 
-        user.setActive(true);
-        user.setRoles(Collections.singleton(Role.USER));
-        userRepository.save(user);
-
         return "redirect:/login";
+    }
+
+    @GetMapping("/activate/{code}")
+    public String activate(Model model, @PathVariable String code) {
+        boolean isActivated = userService.activateUser(code);
+
+        if (isActivated) {
+            model.addAttribute("message", "User successfully activated");
+        } else {
+            model.addAttribute("message", "Activation code is not found");
+        }
+
+        return "login";
     }
 }
