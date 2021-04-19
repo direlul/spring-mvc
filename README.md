@@ -27,9 +27,10 @@
 git clone https://github.com/direlul/spring-mvc.git
 ```
 В application-production.properties установить путь upload.path и настроить бд.
-В postgres создать бд twitter:
+В postgres создать бд twitter и testtwitter:
 ```sh
 CREATE DATABASE twitter;
+CREATE DATABASE testtwitter;
 ```
 Собрать проект:
 
