@@ -1,15 +1,19 @@
-version: "3.7"
+version: '3.8'
 
 services:
   app:
     restart: always
     build: .
+    command: ["java","-jar","/app.jar"]
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/twitter
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
     ports:
       - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
     container_name: twitter
 
   db:
@@ -18,9 +22,13 @@ services:
       - 5432:5432
     volumes:
       - ./storage/postgresql:/var/lib/postgresql
-      - ./init-user-db.sh:/docker-entrypoint-initdb.d/init-user-db.sh
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=twitter
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     container_name: twitter_db
