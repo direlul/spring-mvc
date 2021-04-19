@@ -10,7 +10,7 @@
 Для создания пользователя потребуется ввести имя пользователя, пароль и почту, на которую придёт ссылка для подтверждения аккаунта.
 После перехода по ссылке в письме пользователя будет активирован.
 
-<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/login.png" width="100%">
+<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/registration.png" width="100%">
 
 ## Главная страница
 
