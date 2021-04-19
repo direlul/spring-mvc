@@ -4,13 +4,13 @@
 
 
 ## Технологии
-- JDK 8
+- JDK 11
     - Spring
-    - Boot
-    - Security
-    - JPA
-    - Validation
-    - Web
+      - Boot
+      - Security
+      - JPA
+      - Validation
+      - Web
 - FlyWay
 - JUnit
 - Maven
@@ -53,5 +53,5 @@ mvn clean install
 ```
 Собрать и запустить контейнеры:
 ```sh
-docker compose up
+docker-compose up
 ```
