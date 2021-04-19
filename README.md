@@ -53,7 +53,7 @@ git clone https://github.com/direlul/spring-mvc.git
 ```sh
 mvn clean install
 ```
-Собрать и запустить контейнеры:
+Собрать и подождать пока запустятся контейнеры:
 ```sh
 docker-compose up
 ```
