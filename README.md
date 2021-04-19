@@ -1,6 +1,7 @@
 # Simple Twitter
 
 Учебный проект, с элементами социальной сети, простая копия твиттера.
+[Краткое описание проекта](https://github.com/direlul/spring-mvc/blob/main/readme/description)
 
 
 ## Технологии
