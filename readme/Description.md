@@ -4,7 +4,7 @@
 - username: admin
 - password: 123
 
-<img src="https://https://github.com/direlul/spring-mvc/blob/main/readme/images/login.png" width="100%">
+<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/login.png" width="100%">
 
 ## Регистрация
 Для создания пользователя потребуется ввести имя пользователя, пароль и почту, на которую придёт ссылка для подтверждения аккаунта.
