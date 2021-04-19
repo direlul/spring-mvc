@@ -1,10 +1,13 @@
 package ru.saburov.springmvc.controller;
 
-import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,22 +16,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import ru.saburov.springmvc.domain.Message;
 import ru.saburov.springmvc.domain.User;
+import ru.saburov.springmvc.domain.dto.MessageDto;
 import ru.saburov.springmvc.repository.MessageRepository;
+import ru.saburov.springmvc.service.MessageService;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.UUID;
 
 @Controller
 public class MainController {
     private final MessageRepository messageRepository;
-    @Value("${upload.path}")
-    private String uploadPath;
+    private final MessageService messageService;
 
-    public MainController(MessageRepository messageRepository) {
+    public MainController(MessageRepository messageRepository, MessageService messageService) {
         this.messageRepository = messageRepository;
+        this.messageService = messageService;
     }
 
     @GetMapping("/")
@@ -41,17 +43,23 @@ public class MainController {
     }
 
     @GetMapping("/main")
-    public String main(@RequestParam(required = false) String filter, Model model) {
-        Iterable<Message> messages = messageRepository.findAll();
+    public String main(@RequestParam(required = false) String filter,
+                       Model model,
+                       @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable,
+                       @AuthenticationPrincipal User user
+    ) {
+        Page<MessageDto> page;
         model.addAttribute("message", new Message());
 
-        if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findByTag(filter);
-        } else {
-            messages = messageRepository.findAll();
-        }
+        page = messageService.messageList(pageable, filter, user);
 
-        model.addAttribute("messages", messages);
+        int[] bodyPager = messageService.getBodyPager(page);
+
+        model.addAttribute("body", bodyPager);
+        model.addAttribute("page", page);
+        model.addAttribute("url", "/main");
+        model.addAttribute("filter", filter);
+
         return "main";
     }
 
@@ -61,33 +69,21 @@ public class MainController {
             @Valid @ModelAttribute("message") Message message,
             Errors errors,
             @RequestParam MultipartFile file,
-            Model model
+            Model model,
+            @PageableDefault(sort = {"id"}, direction = Sort.Direction.DESC) Pageable pageable
     ) throws IOException {
         message.setAuthor(user);
 
         if (!errors.hasErrors()) {
-            if (file != null && !file.getOriginalFilename().isEmpty()) {
-                File uploadDir = new File(uploadPath);
-
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdir();
-                }
-
-                String uuidFile = UUID.randomUUID().toString();
-                String resultFileName = uuidFile + "." + file.getOriginalFilename();
-
-                file.transferTo(new File(uploadPath + "/" + resultFileName));
-
-                message.setFilename(resultFileName);
-            }
+            messageService.saveFile(message, file);
             messageRepository.save(message);
         }
 
-        Iterable<Message> messages = messageRepository.findAll();
+        Iterable<MessageDto> page = messageRepository.findAll(pageable, user);
 
-        model.addAttribute("messages", messages);
+        model.addAttribute("page", page);
 
-        return "main";
+        return "/main";
     }
 
 }

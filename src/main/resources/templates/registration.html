@@ -37,9 +37,8 @@
             <label class="col-sm-2 col-form-label">Password:</label>
             <div class="col-sm-6">
                 <input type="password" name="password2" class="form-control" placeholder="Retype password"
-                       th:field="*{password2}"
-                       th:classappend="${#fields.hasErrors('password2')} ? is-invalid : ''"/>
-                <div class="invalid-feedback" th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}"></div>
+                       th:classappend="${passwordError != null || passwordConfirmError != null} ? is-invalid : ''"/>
+                <div class="invalid-feedback" th:if="${passwordConfirmError != null}" th:text="${passwordConfirmError}"></div>
             </div>
         </div>
 
@@ -50,6 +49,10 @@
                        th:field="*{email}"
                        th:classappend="${#fields.hasErrors('email')} ? is-invalid : ''"/>
                 <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+            <div class="g-recaptcha" data-sitekey="6LdwyaYaAAAAAEcZU4PVOhyiSgWuNONMcnOfu9s1"></div>
+            <div th:if="${captchaError != null}">
+                <div class="alert alert-danger" th:if="${captchaError != null}" th:text="${captchaError}"></div>
             </div>
         </div>
 

@@ -1,37 +1,62 @@
 package ru.saburov.springmvc.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.thymeleaf.util.StringUtils;
 import ru.saburov.springmvc.domain.User;
+import ru.saburov.springmvc.domain.dto.CaptchaResponseDto;
 import ru.saburov.springmvc.service.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 public class RegistrationController {
-    private final UserService userService;
+    private final static String CAPTCHA_URL = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
 
-    public RegistrationController(UserService userService) {
+    private final UserService userService;
+    private final RestTemplate restTemplate;
+
+    @Value("${recaptcha.secret}")
+    private String secret;
+
+    public RegistrationController(UserService userService, RestTemplate restTemplate) {
         this.userService = userService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping("/registration")
-    public String registration(Model model) {
-        model.addAttribute("user", new User());
+    public String registration(Model model,
+                               @ModelAttribute User user) {
         return "registration";
     }
 
     @PostMapping("/registration")
-    public String addUser(@ModelAttribute("user") @Valid User user, Errors errors, Model model) {
+    public String addUser(@RequestParam("password2") String passwordConfirm,
+                          @RequestParam("g-recaptcha-response") String captchaResponse,
+                          @ModelAttribute("user") @Valid User user,
+                          Errors errors,
+                          Model model) {
 
         boolean isValid = true;
+        String url = String.format(CAPTCHA_URL, secret, captchaResponse);
+        CaptchaResponseDto response = restTemplate.postForObject(url, List.of(), CaptchaResponseDto.class);
 
-        if (user.getPassword() != null && !user.getPassword().equals(user.getPassword2())) {
+        if (!response.isSuccess()) {
+            model.addAttribute("captchaError", "Fill captcha");
+            isValid = false;
+        }
+
+        if (StringUtils.isEmpty(passwordConfirm)) {
+            model.addAttribute("passwordConfirmError", "Password confirm cannot be empty");
+            isValid = false;
+        }
+
+        if (user.getPassword() != null && !user.getPassword().equals(passwordConfirm)) {
             model.addAttribute("passwordError", "Passwords are different!");
             isValid = false;
         }
@@ -49,7 +74,10 @@ public class RegistrationController {
             return "registration";
         }
 
-        return "redirect:/login";
+        model.addAttribute("message", "You have received a letter to confirm your account, " +
+                "please follow the link in the letter");
+
+        return "/login";
     }
 
     @GetMapping("/activate/{code}")
@@ -57,8 +85,10 @@ public class RegistrationController {
         boolean isActivated = userService.activateUser(code);
 
         if (isActivated) {
+            model.addAttribute("messageType", "success");
             model.addAttribute("message", "User successfully activated");
         } else {
+            model.addAttribute("messageType", "danger");
             model.addAttribute("message", "Activation code is not found");
         }
 

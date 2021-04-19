@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layouts/layout}">
+<head>
+</head>
+<body>
+<div layout:fragment="content">
+    <div style="padding: 0 40%;">
+        <h1 th:text="${userChannel.username}"></h1>
+        <div th:text="${type}"></div>
+        <div th:each="user : ${users}">
+            <li class="list-group-item">
+                <a th:href="@{|/user-messages/${user.id}|}" th:text="${user.username}"></a>
+            </li>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

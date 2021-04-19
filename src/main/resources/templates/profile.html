@@ -6,20 +6,26 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <h1 th:text="${username}"></h1>
+        <h1 th:text="${user.username}"></h1>
         <div th:if="${message != null}" th:text="${message}"></div>
-        <form th:method="POST" th:action="@{/user/profile}">
+        <form th:method="POST" th:action="@{/user/profile}" th:object="${user}">
             <div class="form-group row mb-3">
                 <label class="col-sm-2 col-form-label">Password:</label>
                 <div class="col-sm-6">
-                    <input type="password" name="password" class="form-control" placeholder="Password" />
+                    <input type="password" name="password" class="form-control" th:field="*{password}"
+                           th:classappend="${#fields.hasErrors('password')} ? is-invalid : ''"
+                           placeholder="Password" />
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
                 </div>
             </div>
 
             <div class="form-group row mb-3">
                 <label class="col-sm-2 col-form-label">Email:</label>
                 <div class="col-sm-6">
-                    <input type="email" name="email" class="form-control" placeholder="some@some.com" th:value="${mail}"/>
+                    <input type="email" name="email" class="form-control" placeholder="some@some.com" th:value="*{email}"
+                           th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? is-invalid : ''"/>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Save</button>

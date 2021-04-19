@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layouts/layout}">
+<head>
+    <title>Messages</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1 th:text="${userChannel.username}"></h1>
+    <div th:if="${!isCurrentUser}" th:switch="${isSubscriber}">
+        <a class="btn btn-info" th:case="${false}" th:href="@{|/user/subscribe/${userChannel.id}|}">Subscribe</a>
+        <a class="btn btn-info" th:case="${true}" th:href="@{|/user/unsubscribe/${userChannel.id}|}">Unsubscribe</a>
+    </div>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="card h-100">
+                    <div class="m-2 card-body card-text">
+                        <div class="card-title">Subscriptions</div>
+                        <h2 class="card-text">
+                            <a th:text="${subscriptionsCount}"
+                               th:href="@{|/user/subscriptions/${userChannel.id}/list|}"></a>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <div class="m-2 card-body card-text">
+                        <div class="card-title">Subscribers</div>
+                        <h2 class="card-text">
+                            <a th:text="${subscribersCount}"
+                               th:href="@{|/user/subscribers/${userChannel.id}/list|}"></a>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${isCurrentUser}">
+        <div th:replace="fragments/messages :: edit_message"></div>
+    </div>
+
+
+    <div th:replace="fragments/messages :: messages_list"></div>
+</div>
+
+</body>
+</html>

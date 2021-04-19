@@ -11,7 +11,9 @@
             Reason: <span th:text="${errorMsg}">Demo Invalid input</span>
         </div>
     </div>
-    <div th:if="${message != null}" th:text="${message}"></div>
+    <div th:if="${message != null}">
+        <div th:class="${'alert alert-' + messageType}" th:text="${message}"></div>
+    </div>
     <form th:action="@{/login}" method="post">
         <div class="form-group row mb-3">
             <label class="col-sm-2 col-form-label">User Name:</label>

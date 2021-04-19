@@ -1,0 +1,116 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="edit_message">
+
+    <a class="btn btn-primary mt-3" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+        Message
+    </a>
+    <div class="collapse"  th:classappend="${#fields.hasErrors('message.*')} ? show : ''" id="collapseExample">
+        <div class="form-group mt-3">
+            <form method="post" th:action="@{''}" enctype="multipart/form-data" th:object="${message}">
+                <div class="form-group mt-3">
+                    <input type="text" name="text" th:field="*{text}" class="form-control"
+                           th:classappend="${#fields.hasErrors('text')} ? is-invalid : ''"
+                           placeholder="Введите сообщение"/>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('text')}" th:errors="*{text}"></div>
+                </div>
+                <div class="form-group mt-3">
+                    <input type="text" name="tag" th:field="*{tag}" class="form-control"
+                           th:classappend="${#fields.hasErrors('tag')} ? is-invalid : ''"
+                           placeholder="Тэг"/>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('tag')}" th:errors="*{tag}"></div>
+                </div>
+                <div class="form-group mt-3">
+                    <div class="custom-file">
+                        <input type="file" class="form-control" name="file" id="customFile"/>
+                    </div>
+                </div>
+                <input type="hidden" name="id" th:value="${message != null ? message.id : ''}"/>
+                <div class="form-group mt-3">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+<th:block th:fragment="messages_list">
+    <div th:replace="fragments/messages :: pager"></div>
+    <div class="mt-3 row row-cols-1 row-cols-md-3 g-4" id="message-list">
+        <div th:each="message : ${page}" class="col">
+            <div class="card h-100" th:attr="data-id=${message.id}">
+
+                <img th:if="${message.filename != null}"
+                     th:src="@{/img/{filename}(filename=${message.filename})}" class="card-img-top" />
+
+                <div class="m-2 card-body card-text">
+                    <span th:text="${message.text}">text</span><br/>
+                    <i th:text="${'#'+message.tag}">tag</i>
+                </div>
+                <div class="card-footer text-muted container">
+                    <div class="row">
+                        <a class="col align-self-center" th:href="@{/user-messages/{id}(id=${message.author.id})}"
+                           th:text="${message.author?.username}"></a>
+                        <a class="col align-self-center" th:href="@{|/messages/${message.id}/like|}">
+                            <i th:if="${!message.meLiked}" class="far fa-heart"></i>
+                            <i th:if="${message.meLiked}" class="fas fa-heart"></i>
+                            <span th:text="${message.likes}"></span>
+                        </a>
+                        <a th:href="@{|/user-messages/${message.author.id}?message=${message.id}|}"
+                           th:if="${#authentication.getPrincipal().getId() == message.author.id}"
+                           class="btn btn-primary col">
+                            Edit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments/messages :: pager"></div>
+</th:block>
+
+<th:block th:fragment="pager" >
+
+    <div class="container">
+        <div class="row mt-3">
+            <ul class="pagination mt-3 col justify-content-center">
+                <th:block th:each="pageNumber : ${body}">
+                    <li th:if="${pageNumberStat.first}" class="page-item">
+                        <a class="page-link" th:href="${url} + '?page='+ ${page.getNumber()} + '&size=' + ${page.getSize()}"
+                           aria-label="Previous">
+                            <span aria-hidden="true">&#8920;</span>
+                        </a>
+                    </li>
+                    <li class="page-item active" th:if="${pageNumber} == ${page.getNumber()+1}">
+                        <a class="page-link" th:text="${pageNumber}" href="#"></a>
+                    </li>
+                    <li class="page-item disabled" th:if="${pageNumber} == -1">
+                        <a class="page-link" href="#">...</a>
+                    </li>
+                    <li class="page-item" th:if="${pageNumber} != -1 and ${pageNumber} != ${page.getNumber() + 1}">
+                        <a class="page-link" th:text="${pageNumber}" th:href="${url} + '?page='+ ${pageNumber} + '&size=' + ${page.getSize()}"></a>
+                    </li>
+                    <li th:if="${pageNumberStat.last}" class="page-item"  aria-label="Next">
+                        <a class="page-link" th:href="${url} + '?page='+ ${page.getNumber() + 2} + '&size=' + ${page.getSize()}">
+                            <span aria-hidden="true">&#8921;</span>
+                        </a>
+                    </li>
+                </th:block>
+            </ul>
+
+            <ul class="pagination mt-3 col justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Элементов на странице</a>
+                </li>
+                <li class="page-item"
+                    th:each="c: ${new int[] {5, 10, 25, 50}}"
+                    th:classappend="${c == page.getSize()} ? active : ''">
+
+                    <a class="page-link" th:href="@{|${url}?size=${c}|}" tabindex="-1" aria-disabled="true" th:text="${c}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</th:block>
+
+</html>
