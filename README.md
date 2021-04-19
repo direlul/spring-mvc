@@ -1,7 +1,7 @@
 # Simple Twitter
 
 Учебный проект, с элементами социальной сети, простая копия твиттера.
-[Краткое описание проекта](https://github.com/direlul/spring-mvc/blob/main/readme/description)
+[Краткое описание проекта](https://github.com/direlul/spring-mvc/blob/main/readme/Description.md)
 
 
 ## Технологии
@@ -24,7 +24,7 @@
 
 Склонировать репозиторий:
 ```sh
-git clone https://github.com/direlul/spring-mvc-pet.git
+git clone https://github.com/direlul/spring-mvc.git
 ```
 В application-production.properties установить путь upload.path и настроить бд.
 В postgres создать бд twitter:
@@ -45,7 +45,7 @@ java -jar spring-mvc-1.0-SNAPSHOT.jar
 
 Склонировать репозиторий:
 ```sh
-git clone https://github.com/direlul/spring-mvc-pet.git
+git clone https://github.com/direlul/spring-mvc.git
 ```
 Собрать проект:
 

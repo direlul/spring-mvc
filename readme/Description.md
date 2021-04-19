@@ -14,20 +14,22 @@
 
 ## Главная страница
 
-На главной странице располагаются сообщения от всех пользователей. По тэгам можно искать сообщения.
+На главной странице располагаются сообщения от всех пользователей. По тегам можно искать сообщения.
 
 <img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/main.png" width="100%">
 
 
 Каждое сообщение состоит из обязательного текста, и, по желанию, тега с картинкой. Так же свои сообщения можно редактировать.
 
-<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/message.png" width="100%">
+<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/message.png" width="75%">
 
 Все формы в проекте валидируемые, включая форму создания сообщений.
 
 <img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/validate-message.png" width="100%">
 
 Пагинация на странице настраиваемая, от 5 до 50 сообщений на одной странице.
+
+<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/pagination.png" width="100%">
 
 ## Редактирование данных
 У пользователя есть возможность изменить пароль и почту.
@@ -43,5 +45,5 @@
 ## Админская панель
 Админская панель позволяет изменять имя и роли у пользователей.
 
-<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/admin.png" width="100%">
+<img src="https://github.com/direlul/spring-mvc/blob/main/readme/images/admin.png" width="50%">
 
